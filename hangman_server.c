@@ -1,17 +1,18 @@
 // hangman_server.c
 
-#include <sys/types.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <string.h>
-#include<strings.h>
-#include <netdb.h>
-#include <stdio.h>
+#include <stdbool.h>
 #include <ctype.h>
-#include <stdbool.h> 
 #include <math.h>
+#include <pthread.h>
+
+int i;
 
 char* getMessage(const char *buffer) {
 // PRECONDITION: buffer is non-empty and is all integers
@@ -25,36 +26,61 @@ char* getMessage(const char *buffer) {
 	return mssg;
 }
 
+void *socketThread(void *arg) {
+	i++;
+	int newsockfd = *((int *)arg);
+	char buffer[256];  // 256 bytes
+	int j=0;
+	while (j++<3) {
+		bzero(buffer,256);  // clear buffer
+		read(newsockfd,buffer,255);  // get string from client
+		char *newBuffer = calloc(256, sizeof(char));  // makes new character array
+		newBuffer = getMessage(buffer);  // populate char array with whole message
+		bzero(buffer,256);  // clear buffer
+		memcpy(buffer, newBuffer, strlen(newBuffer));  // overwrites buffer with the message
+		write(newsockfd,buffer,strlen(buffer));  // write overwritten buffer to socket
+	}
+	close(newsockfd);  // close the client socket after fully handled
+	i--;
+}
+
 int main(int argc, char *argv[]) {
 
 	// MAKE VARIABLES
-	struct sockaddr_in from;
-	struct sockaddr_in server;
-	socklen_t fromlen;
-	char buff[256];
+	int serverSocketFD, newsockfd, portno;
+	socklen_t clilen;  // socket length variable
+	// char buffer[256];  // 256 bytes
+	struct sockaddr_in serv_addr, cli_addr;  // address structures
+	pthread_t thread;
 
 	// CREATE NEW SOCKET
-	int sock = socket(AF_INET,SOCK_DGRAM,0);
-	server.sin_family = AF_INET;  // for IPv4
-	server.sin_addr.s_addr=INADDR_ANY;  // where to accept connections (all interfaces)
-	server.sin_port=htons(atoi(argv[1]));  // what port to bind to (get from user)
+	serverSocketFD = socket(AF_INET, SOCK_STREAM, 0);
+
+	// POPULATE serv_addr STRUCTURE
+	bzero((char *) &serv_addr, sizeof(serv_addr));  // clears serv_addr struct
+	portno = atoi(argv[1]);  // get port number
+	serv_addr.sin_family = AF_INET;  // for IPv4
+	serv_addr.sin_addr.s_addr = INADDR_ANY;  // where to accept connections from (all interfaces)
+	serv_addr.sin_port = htons(portno);  // what port to bind to
 
 	// BIND SOCKET TO THE ADDRESS
-	bind(sock,(struct sockaddr *)&server,sizeof(server));
-	fromlen = sizeof(struct sockaddr_in);  //length of sockaddr struct pointed to
+	bind(serverSocketFD, (struct sockaddr *) &serv_addr, sizeof(serv_addr));
 
-	// READ & WRITE TO SOCKET
-	while (true) {  // keeps socket open for incoming requests
-		recvfrom(sock,buff,256,0,(struct sockaddr *)&from,&fromlen);  // gets string from client
-		char *newBuffer = calloc(256, sizeof(char));  // makes new character array
-		newBuffer = getMessage(buff);  // populate char array with whole message
-		bzero(buff,256);  // clear buffer
-		memcpy(buff, newBuffer, strlen(newBuffer));  // overwrites buffer with the message
-		sendto(sock,buff,256,0,(struct sockaddr *)&from,fromlen);  // write overwritten buffer to socket
-		bzero(buff,256);  // clear the buffer again
+	// LISTEN ON SOCKET FOR NEW CONNECTIONS
+	listen(serverSocketFD,5);
+
+	i=1;
+	while (true) {
+		if (i>3) {
+			printf("too many");
+			break;
+		}
+		clilen = sizeof(cli_addr);
+		newsockfd = accept(serverSocketFD, (struct sockaddr *) &cli_addr, &clilen);
+		pthread_create(&thread, 0, socketThread, &newsockfd);
 	}
 
-	// CLOSE THE SOCKET
-	close(sock);
+	close(serverSocketFD);
+
 	return 0;
 }
