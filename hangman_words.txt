@@ -1,0 +1,9 @@
+network
+client
+server
+adderall
+finals
+pikachu
+ucsb
+yerba
+coffee
