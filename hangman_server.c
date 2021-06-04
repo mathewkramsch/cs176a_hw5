@@ -110,7 +110,7 @@ bool gameRound(int newsockfd, char *word, char *currentWord, char *incorrectLett
 
 	// read next letter guess
 	bzero(buffer,256);
-	read(newsockfd,buffer,255);
+	if (read(newsockfd,buffer,255)==0) return false;
 	char letterGuess[50];
 	sprintf(letterGuess, "%c", buffer[0]);
 
@@ -148,7 +148,11 @@ void *socketThread(void *arg) {
 		write(newsockfd, ">>>Ready to start game? (y/n): ", 31);
 
 		// read initial client message
-		read(newsockfd, buffer, 255);
+		if (read(newsockfd, buffer, 255)==0) {
+			close(newsockfd);
+			i--;
+			return arg;
+		}
 
 		// start game (if "0")
 		if (buffer[0]=='0') {

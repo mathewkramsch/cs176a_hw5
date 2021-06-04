@@ -114,7 +114,10 @@ int main(int argc, char *argv[]) {
     connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr));  // connect() system call
 
 	bzero(buffer,256);
-	read(sockfd,buffer,255);
+	if (read(sockfd,buffer,255)==0) {
+		close(sockfd);
+		return 0;
+	}
 	printf("%s",buffer);
 
 	// start game
