@@ -20,22 +20,22 @@ char* getServerMssg(const char *buffer) {
 		int numIncorrect = buffer[2] - '0';
 		for (int i=3; i<3+wordLength; i++) {
 			char letter[50];
-			if (buffer[i]==' ') strcat(currentWordGuess, "_");
+			if (buffer[i]==' ') strcat(currentWordGuess, "_ ");
 			else {
-				sprintf(letter, "%c", buffer[i]);
+				sprintf(letter, "%c ", buffer[i]);
 				strcat(currentWordGuess, letter);
 			}
 		}
 		for (int i=3+wordLength; i<3+wordLength+numIncorrect; i++) {
 			char letter[50];
-			sprintf(letter, "%c", buffer[i]);
+			sprintf(letter, "%c ", buffer[i]);
 			strcat(incorrectGuesses, letter);
 		}
 		strcat(mssg, ">>>");
 		strcat(mssg, currentWordGuess);
 		strcat(mssg, "\n>>>Incorrect Guesses: ");
 		strcat(mssg, incorrectGuesses);
-		strcat(mssg, "\n\n");
+		strcat(mssg, "\n>>>\n");
 	}
 	else {  // if mssg flag set (to length of message data)
 		char *length = calloc(256, sizeof(char));
