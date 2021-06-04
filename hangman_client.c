@@ -31,8 +31,9 @@ char* getServerMssg(const char *buffer) {
 			sprintf(letter, "%c", buffer[i]);
 			strcat(incorrectGuesses, letter);
 		}
+		strcat(mssg, ">>>");
 		strcat(mssg, currentWordGuess);
-		strcat(mssg, "\nIncorrect Guesses: ");
+		strcat(mssg, "\n>>>Incorrect Guesses: ");
 		strcat(mssg, incorrectGuesses);
 		strcat(mssg, "\n\n");
 	}
@@ -77,13 +78,13 @@ bool gameRound(int sockfd) {
 
 	if (buffer[0]=='0') {
 		do {
-			printf("Letter to guess: ");
+			printf(">>>Letter to guess: >>>");
 			bzero(buffer,256);
 			if (fgets(buffer,255,stdin)==NULL) {
 				printf("\n");
 				return false;
 			}
-			if (strlen(buffer)>2 || !isalpha(buffer[0])) printf("Error! Please guess one letter.\n");
+			if (strlen(buffer)>2 || !isalpha(buffer[0])) printf(">>>Error! Please guess one letter.\n");
 		} while (strlen(buffer)>2 || !isalpha(buffer[0]));
 
 		char *newBuffer = calloc(256, sizeof(char));

@@ -79,22 +79,18 @@ char* getServerPacket(char *word, char *currentWord, char *incorrectLetters) {
 char* getServerPacketMssg(int flag, char *word) {
 	// flag=0: lose, flag=1: win, flag=2: server overloaded
 	char *packet = calloc(256, sizeof(char));
-	if (flag==2) {
-		strcat(packet, "17server-overloaded");
-		return packet;
-	}
-	int length = 26;
+	int length = 38;
 	length += strlen(word);
 	if (flag==0) length +=11;
 	else length += 8;
 	char mssgLength[50];
 	sprintf(mssgLength, "%i", length);
 	strcat(packet, mssgLength);
-	strcat(packet, "The word was ");
+	strcat(packet, ">>>The word was ");
 	strcat(packet, word);
-	if (flag==0) strcat(packet, "\nYou Lose :(");
-	if (flag==1) strcat(packet, "\nYou Win!");
-	strcat(packet, "\nGame Over!");
+	if (flag==0) strcat(packet, "\n>>>You Lose :(");
+	if (flag==1) strcat(packet, "\n>>>You Win!");
+	strcat(packet, "\n>>>Game Over!");
 	return packet;
 
 }
@@ -149,7 +145,7 @@ void *socketThread(void *arg) {
 	char buffer[256];
 	bzero(buffer,256);
 	if (i<4) {
-		write(newsockfd, "Ready to start game? (y/n): ", 28);
+		write(newsockfd, ">>>Ready to start game? (y/n): >>>", 34);
 
 		// read initial client message
 		read(newsockfd, buffer, 255);
@@ -161,7 +157,7 @@ void *socketThread(void *arg) {
 			char *incorrectLetters = calloc(256, sizeof(char));
 			while (gameRound(newsockfd, word, currentWord, incorrectLetters));
 		}
-	} else write(newsockfd, "server-overloaded\n", 18);
+	} else write(newsockfd, ">>>server-overloaded\n", 21);
 	close(newsockfd);
 	i--;
 	return arg;
