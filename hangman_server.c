@@ -145,7 +145,7 @@ void *socketThread(void *arg) {
 	char buffer[256];
 	bzero(buffer,256);
 	if (i<4) {
-		write(newsockfd, ">>>Ready to start game? (y/n): >>>", 34);
+		write(newsockfd, ">>>Ready to start game? (y/n): ", 31);
 
 		// read initial client message
 		read(newsockfd, buffer, 255);

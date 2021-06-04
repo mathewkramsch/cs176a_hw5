@@ -78,7 +78,7 @@ bool gameRound(int sockfd) {
 
 	if (buffer[0]=='0') {
 		do {
-			printf(">>>Letter to guess: >>>");
+			printf(">>>Letter to guess: ");
 			bzero(buffer,256);
 			if (fgets(buffer,255,stdin)==NULL) {
 				printf("\n");
