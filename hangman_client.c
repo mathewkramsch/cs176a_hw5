@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 	printf("%s",buffer);
 
 	// start game
-	if (buffer[0]!='s') {  // if not server-overloaded message
+	if (buffer[3]!='s') {  // if not server-overloaded message
 		bzero(buffer,256);  // clears buffer
 		if (fgets(buffer,255,stdin)==NULL) {
 			printf("\n");
