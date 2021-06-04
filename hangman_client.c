@@ -31,6 +31,8 @@ char* getServerMssg(const char *buffer) {
 			sprintf(letter, "%c ", buffer[i]);
 			strcat(incorrectGuesses, letter);
 		}
+		currentWordGuess[strlen(currentWordGuess)-1] = 0;
+		incorrectGuesses[strlen(incorrectGuesses)-1] = 0;
 		strcat(mssg, ">>>");
 		strcat(mssg, currentWordGuess);
 		strcat(mssg, "\n>>>Incorrect Guesses: ");
