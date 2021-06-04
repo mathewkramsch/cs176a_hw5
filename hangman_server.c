@@ -79,7 +79,7 @@ char* getServerPacket(char *word, char *currentWord, char *incorrectLetters) {
 char* getServerPacketMssg(int flag, char *word) {
 	// flag=0: lose, flag=1: win, flag=2: server overloaded
 	char *packet = calloc(256, sizeof(char));
-	int length = 38;
+	int length = 36;
 	length += strlen(word);
 	if (flag==0) length +=11;
 	else length += 8;
@@ -88,7 +88,7 @@ char* getServerPacketMssg(int flag, char *word) {
 	strcat(packet, mssgLength);
 	strcat(packet, ">>>The word was ");
 	strcat(packet, word);
-	if (flag==0) strcat(packet, "\n>>>You Lose :(");
+	if (flag==0) strcat(packet, "\n>>>You Lose!");
 	if (flag==1) strcat(packet, "\n>>>You Win!");
 	strcat(packet, "\n>>>Game Over!");
 	return packet;
