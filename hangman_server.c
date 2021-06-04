@@ -28,9 +28,10 @@ char* getWord(const char *filename) {
 
 	// store words in array
 	char words[count][20];
-	for (int i=0; i<count; i++) {
-		fgets(word, sizeof word, fd);
-		strcpy(words[i], word);
+	int i=0;
+	while(1) {
+		if (fgets(word, sizeof word, fd)==NULL) break;
+		strcpy(words[i++], word);
 	}
 	fclose(fd);
 	int randNum = rand() % count + 1;
