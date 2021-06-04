@@ -79,7 +79,10 @@ bool gameRound(int sockfd) {
 		do {
 			printf("Letter to guess: ");
 			bzero(buffer,256);
-			fgets(buffer,255,stdin);
+			if (fgets(buffer,255,stdin)==NULL) {
+				printf("\n");
+				return false;
+			}
 			if (strlen(buffer)>2 || !isalpha(buffer[0])) printf("Error! Please guess one letter.\n");
 		} while (strlen(buffer)>2 || !isalpha(buffer[0]));
 
@@ -114,7 +117,11 @@ int main(int argc, char *argv[]) {
 	// start game
 	if (buffer[0]!='s') {  // if not server-overloaded message
 		bzero(buffer,256);  // clears buffer
-		fgets(buffer,255,stdin);  // stores user input into buffer
+		if (fgets(buffer,255,stdin)==NULL) {
+			printf("\n");
+			close(sockfd);
+			return 0;
+		}
 		if (buffer[0]=='y') {
 			write(sockfd,"0",1);
 			while (gameRound(sockfd));
