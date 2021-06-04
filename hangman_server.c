@@ -34,7 +34,7 @@ char* getWord(const char *filename) {
 		strcpy(words[i++], word);
 	}
 	fclose(fd);
-	int randNum = rand() % count + 1;
+	int randNum = rand() % count;
 	strcpy(chosenWord, words[randNum]);
 	chosenWord[strlen(chosenWord)-1] = 0;
 	return chosenWord;
