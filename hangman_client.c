@@ -72,7 +72,7 @@ bool gameRound(int sockfd) {
 
 	// get serverpacket
 	bzero(buffer,256);
-	read(sockfd,buffer,255);
+	if (read(sockfd,buffer,255)==0) return false;
 
 	// print server message
 	char *serverMssg = getServerMssg(buffer);
